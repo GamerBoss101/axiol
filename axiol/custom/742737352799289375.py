@@ -427,21 +427,20 @@ class ChemistryHelp(commands.Cog):
 
         mentions = re.findall(r'<@!?\d+>', message.content)
         if mentions:
-            user_id = str(message.author.id)
-            current_time = time.time()
 
             if len(mentions) >= 3:
-                dict_mentions = []
-                for mention in mentions:
-                    mention_id = mention[3:-1]
-                    if mention_id not in dict_mentions:
-                        dict_mentions.append(mention_id)
-                if len(dict_mentions) >= 3:
-                    await message.channel.send(f"{message.author.mention}, please do not spam mentions.")
-                    await message.delete()
-                    await member.add_roles(disnake.utils.get(message.guild.roles, id=742801455010021387)) # Insert Role ID (Muted Role)
-                    return
+                exception_roles = [1066406323509539056, 1025426106205098005, 742799518117920878, 1266400109919338648, 744596196609490974, 846899313292083231]
+                member_roles = list(map(lambda x: x.id, member.roles))
+                for i in range(len(exception_roles)):
+                    if exception_roles[i] in member_roles:
+                        return
+                await message.channel.send(f"{message.author.mention}, please do not spam mentions.")
+                await message.delete()
+                await member.add_roles(disnake.utils.get(message.guild.roles, id=742801455010021387)) # Insert Role ID (Muted Role)
+                return
 
+            user_id = str(message.author.id)
+            current_time = time.time()
             if user_id in last_action:
                 last_action[user_id]['time'].append(current_time)
                 last_action[user_id]['messages'].append(message)
